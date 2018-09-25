@@ -70,7 +70,7 @@ out:
 }
 
 int32_t ec_update_write(ec_fop_data_t *fop, uintptr_t mask, off_t offset,
-                        size_t size)
+                        uint64_t size)
 {
     struct iobref *iobref = NULL;
     struct iobuf *iobuf = NULL;
@@ -220,11 +220,11 @@ ec_manager_xattr (ec_fop_data_t *fop, int32_t state)
                 if (fop->fd == NULL) {
                         ec_lock_prepare_inode(fop, &fop->loc[0],
                                               EC_UPDATE_META | EC_QUERY_INFO,
-                                              0, LLONG_MAX);
+                                              0, EC_RANGE_FULL);
                 } else {
                         ec_lock_prepare_fd(fop, fop->fd,
                                            EC_UPDATE_META | EC_QUERY_INFO,
-                                           0, LLONG_MAX);
+                                           0, EC_RANGE_FULL);
                 }
                 ec_lock(fop);
 
@@ -464,10 +464,10 @@ int32_t ec_manager_setattr(ec_fop_data_t * fop, int32_t state)
             if (fop->fd == NULL) {
                 ec_lock_prepare_inode(fop, &fop->loc[0],
                                       EC_UPDATE_META | EC_QUERY_INFO,
-                                      0, LLONG_MAX);
+                                      0, EC_RANGE_FULL);
             } else {
                 ec_lock_prepare_fd(fop, fop->fd, EC_UPDATE_META | EC_QUERY_INFO,
-                                   0, LLONG_MAX);
+                                   0, EC_RANGE_FULL);
             }
             ec_lock(fop);
 
@@ -1136,8 +1136,8 @@ void ec_update_discard_write(ec_fop_data_t *fop, uintptr_t mask)
     ec_t   *ec       = fop->xl->private;
     off_t  off_head  = 0;
     off_t  off_tail  = 0;
-    size_t size_head = 0;
-    size_t size_tail = 0;
+    uint64_t size_head = 0;
+    uint64_t size_tail = 0;
     int    error     = 0;
 
     off_head = fop->offset * ec->fragments - fop->int32;
@@ -1203,7 +1203,7 @@ int32_t ec_manager_discard(ec_fop_data_t *fop, int32_t state)
 {
     ec_cbk_data_t *cbk     = NULL;
     off_t         fl_start = 0;
-    size_t        fl_size  = 0;
+    uint64_t      fl_size  = 0;
 
 
     switch (state) {
@@ -1374,7 +1374,7 @@ out:
 int32_t ec_update_truncate_write (ec_fop_data_t *fop, uintptr_t mask)
 {
         ec_t *ec = fop->xl->private;
-        size_t size = fop->offset * ec->fragments - fop->user_size;
+        uint64_t size = fop->offset * ec->fragments - fop->user_size;
         return ec_update_write (fop, mask, fop->user_size, size);
 }
 
@@ -1450,11 +1450,11 @@ int32_t ec_manager_truncate(ec_fop_data_t * fop, int32_t state)
             if (fop->id == GF_FOP_TRUNCATE) {
                 ec_lock_prepare_inode(fop, &fop->loc[0],
                                       EC_UPDATE_DATA | EC_UPDATE_META |
-                                      EC_QUERY_INFO, fop->offset, LLONG_MAX);
+                                      EC_QUERY_INFO, fop->offset, EC_RANGE_FULL);
             } else {
                 ec_lock_prepare_fd(fop, fop->fd,
                                    EC_UPDATE_DATA | EC_UPDATE_META |
-                                   EC_QUERY_INFO, fop->offset, LLONG_MAX);
+                                   EC_QUERY_INFO, fop->offset, EC_RANGE_FULL);
             }
             ec_lock(fop);
 
@@ -1784,7 +1784,7 @@ int32_t ec_writev_merge_tail(call_frame_t * frame, void * cookie,
 {
     ec_t * ec = this->private;
     ec_fop_data_t * fop = frame->local;
-    size_t size, base, tmp;
+    uint64_t size, base, tmp;
 
     if (op_ret >= 0)
     {
@@ -1820,7 +1820,7 @@ int32_t ec_writev_merge_head(call_frame_t * frame, void * cookie,
 {
     ec_t * ec = this->private;
     ec_fop_data_t * fop = frame->local;
-    size_t size, base;
+    uint64_t size, base;
 
     if (op_ret >= 0)
     {
@@ -1937,7 +1937,7 @@ out:
 static void
 ec_merge_stripe_head_locked (ec_t *ec, ec_fop_data_t *fop, ec_stripe_t *stripe)
 {
-        size_t head, size;
+        uint32_t head, size;
 
         head = fop->head;
         memcpy(fop->vector[0].iov_base, stripe->data, head);
@@ -1954,7 +1954,7 @@ ec_merge_stripe_head_locked (ec_t *ec, ec_fop_data_t *fop, ec_stripe_t *stripe)
 static void
 ec_merge_stripe_tail_locked (ec_t *ec, ec_fop_data_t *fop, ec_stripe_t *stripe)
 {
-        size_t head, tail;
+        uint32_t head, tail;
         off_t  offset;
 
         offset = fop->user_size + fop->head;
@@ -2167,7 +2167,7 @@ int32_t ec_manager_writev(ec_fop_data_t *fop, int32_t state)
     ec_fd_t *ctx = NULL;
     ec_t    *ec = fop->xl->private;
     off_t fl_start = 0;
-    size_t fl_size = LLONG_MAX;
+    uint64_t fl_size = LONG_MAX;
 
     switch (state)
     {
@@ -2215,7 +2215,7 @@ int32_t ec_manager_writev(ec_fop_data_t *fop, int32_t state)
             cbk = ec_fop_prepare_answer(fop, _gf_false);
             if (cbk != NULL) {
                 ec_t *ec = fop->xl->private;
-                size_t size;
+                uint64_t size;
 
                 ec_iatt_rebuild(fop->xl->private, cbk->iatt, 2,
                                 cbk->count);

@@ -960,7 +960,7 @@ glusterfs_handle_dump_metrics (rpcsvc_request_t *req)
                 gf_msg (this->name, GF_LOG_WARNING, ENOMEM,
                         LG_MSG_NO_MEMORY,
                         "Allocated size exceeds expectation: "
-                        "reconsider logic (%"GF_PRI_SIZET")",
+                        "reconsider logic (%"PRId64")",
                         statbuf.st_size);
         }
         msg = GF_CALLOC (1, (statbuf.st_size + 1), gf_common_mt_char);

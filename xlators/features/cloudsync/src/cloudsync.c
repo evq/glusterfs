@@ -278,14 +278,14 @@ cs_truncate_cbk (call_frame_t *frame, void *cookie, xlator_t *this,
                                 __cs_inode_ctx_update (this, local->loc.inode,
                                                        val);
                                 gf_msg (this->name, GF_LOG_INFO, 0, 0,
-                                        " state = %ld", val);
+                                        " state = %" PRId64, val);
 
                                 if (local->call_cnt == 1 &&
                                     (val == GF_CS_REMOTE ||
                                      val == GF_CS_DOWNLOADING))  {
                                         gf_msg (this->name, GF_LOG_WARNING, 0,
                                                 0, "will repair and download "
-                                                "the file, current state : %ld",
+                                                "the file, current state : %" PRId64,
                                                 val);
                                         goto repair;
                                 } else {
@@ -663,7 +663,7 @@ cs_fstat_cbk (call_frame_t *frame, void *cookie, xlator_t *this,
         if (op_ret == 0) {
                 ret = dict_get_uint64 (xdata, GF_CS_OBJECT_STATUS, &val);
                 if (!ret) {
-                        gf_msg_debug (this->name, 0, "state %ld", val);
+                        gf_msg_debug (this->name, 0, "state %" PRId64, val);
                         ret = __cs_inode_ctx_update (this, fd->inode, val);
                         if (ret) {
                                 gf_msg (this->name, GF_LOG_ERROR, 0, 0,
@@ -1039,7 +1039,7 @@ cs_stat_check_cbk (call_frame_t *frame, void *cookie, xlator_t *this,
                                 goto err;
                         } else {
                                 ret = __cs_inode_ctx_update (this, inode, val);
-                                gf_msg_debug (this->name, 0, "status : %lu",
+                                gf_msg_debug (this->name, 0, "status : %" PRIu64,
                                               val);
                                 if (ret) {
                                         gf_msg (this->name, GF_LOG_ERROR, 0, 0,
@@ -1417,7 +1417,7 @@ __cs_inode_ctx_get (xlator_t *this, inode_t *inode, cs_inode_ctx_t **ctx)
         if (ret)
                 *ctx = NULL;
         else
-                *ctx = (cs_inode_ctx_t *)ctxint;
+                *ctx = (cs_inode_ctx_t *)(uintptr_t)ctxint;
 
         return;
 }
@@ -1443,7 +1443,7 @@ __cs_inode_ctx_update (xlator_t *this, inode_t *inode, uint64_t val)
 
                 ctx->state = val;
 
-                ctxint = (uint64_t) ctx;
+                ctxint = (uint64_t)(uintptr_t) ctx;
 
                 ret = __inode_ctx_set (inode, this, &ctxint);
                 if (ret) {
@@ -1451,7 +1451,7 @@ __cs_inode_ctx_update (xlator_t *this, inode_t *inode, uint64_t val)
                         goto out;
                 }
         } else {
-                ctx = (cs_inode_ctx_t *) ctxint;
+                ctx = (cs_inode_ctx_t *)(uintptr_t) ctxint;
 
                 ctx->state = val;
         }
@@ -1475,7 +1475,7 @@ cs_inode_ctx_reset (xlator_t *this, inode_t *inode)
                 return 0;
         }
 
-        ctx = (cs_inode_ctx_t *)ctxint;
+        ctx = (cs_inode_ctx_t *)(uintptr_t)ctxint;
 
         GF_FREE (ctx);
         return 0;

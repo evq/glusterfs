@@ -137,14 +137,14 @@ cs_@NAME@_cbk (call_frame_t *frame, void *cookie, xlator_t *this,
                         } else {
                                 __cs_inode_ctx_update (this, fd->inode, val);
                                 gf_msg (this->name, GF_LOG_INFO, 0, 0,
-                                        " state = %ld", val);
+                                        " state = %" PRId64, val);
 
                                 if (local->call_cnt == 1 &&
                                     (val == GF_CS_REMOTE ||
                                      val == GF_CS_DOWNLOADING))  {
                                         gf_msg (this->name, GF_LOG_INFO, 0,
                                                 0, " will repair and download "
-                                                "the file, current state : %ld",
+                                                "the file, current state : %" PRId64,
                                                 val);
                                         goto repair;
                                 } else {

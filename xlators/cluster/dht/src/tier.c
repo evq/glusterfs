@@ -501,7 +501,7 @@ tier_can_promote_file (xlator_t *this, char const *file_name,
             (current->ia_size > defrag->tier_conf.tier_max_promote_size)) {
                 gf_msg (this->name, GF_LOG_INFO, 0,
                         DHT_MSG_LOG_TIER_STATUS,
-                        "File %s (gfid:%s) with size (%lu) exceeds maxsize "
+                        "File %s (gfid:%s) with size (%" PRIu64 ") exceeds maxsize "
                         "(%d) for promotion. File will not be promoted.",
                         file_name,
                         uuid_utoa(current->ia_gfid),
@@ -531,7 +531,7 @@ tier_can_promote_file (xlator_t *this, char const *file_name,
                 gf_msg (this->name, GF_LOG_INFO, 0,
                         DHT_MSG_LOG_TIER_STATUS,
                         "Estimated block count consumption on "
-                        "hot tier (%lu) exceeds hi watermark (%d%%). "
+                        "hot tier (%" PRIu64 ") exceeds hi watermark (%d%%). "
                         "File will not be promoted.",
                         estimated_usage,
                         defrag->tier_conf.watermark_hi);

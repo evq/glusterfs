@@ -130,12 +130,12 @@ static int
 xlator_option_validate_sizet (xlator_t *xl, const char *key, const char *value,
                               volume_option_t *opt, char **op_errstr)
 {
-        size_t  size = 0;
+        uint64_t  size = 0;
         int       ret = 0;
         char      errstr[256];
 
         /* Check the range */
-        if (gf_string2bytesize_size (value, &size) != 0) {
+        if (gf_string2bytesize_uint64 (value, &size) != 0) {
                 snprintf (errstr, 256,
                           "invalid number format \"%s\" in option \"%s\"",
                           value, key);
@@ -153,7 +153,7 @@ xlator_option_validate_sizet (xlator_t *xl, const char *key, const char *value,
 
         if ((size < opt->min) || (size > opt->max)) {
                 snprintf (errstr, 256,
-                          "'%" GF_PRI_SIZET "' in 'option %s %s' "
+                          "'%" PRIu64 "' in 'option %s %s' "
                           "is out of range [%.0f - %.0f]",
                           size, key, value, opt->min, opt->max);
                 gf_msg (xl->name, GF_LOG_ERROR, 0,
@@ -724,12 +724,12 @@ out:
 static int
 gf_validate_size (const char *sizestr, volume_option_t *opt)
 {
-        size_t                value = 0;
+        uint64_t              value = 0;
         int                     ret = 0;
 
         GF_ASSERT (opt);
 
-        if (gf_string2bytesize_size (sizestr, &value) != 0 ||
+        if (gf_string2bytesize_uint64 (sizestr, &value) != 0 ||
             value < opt->min ||
             value % 512) {
                 ret = -1;
@@ -1230,20 +1230,20 @@ xl_by_name (char *in, xlator_t **out)
 static int
 pc_or_size (char *in, double *out)
 {
-        double  pc = 0;
+        double    pc = 0;
         int       ret = 0;
-        size_t  size = 0;
+        uint64_t  size = 0;
 
         if (gf_string2percent (in, &pc) == 0) {
                 if (pc > 100.0) {
-                        ret = gf_string2bytesize_size (in, &size);
+                        ret = gf_string2bytesize_uint64 (in, &size);
                         if (!ret)
                                 *out = size;
                 } else {
                         *out = pc;
                 }
         } else {
-                ret = gf_string2bytesize_size (in, &size);
+                ret = gf_string2bytesize_uint64 (in, &size);
                 if (!ret)
                         *out = size;
         }
@@ -1255,7 +1255,7 @@ DEFINE_INIT_OPT(uint64_t, uint64, gf_string2uint64);
 DEFINE_INIT_OPT(int64_t, int64, gf_string2int64);
 DEFINE_INIT_OPT(uint32_t, uint32, gf_string2uint32);
 DEFINE_INIT_OPT(int32_t, int32, gf_string2int32);
-DEFINE_INIT_OPT(size_t, size, gf_string2bytesize_size);
+DEFINE_INIT_OPT(uint64_t, size, gf_string2bytesize_uint64);
 DEFINE_INIT_OPT(uint64_t, size_uint64, gf_string2bytesize_uint64);
 DEFINE_INIT_OPT(double, percent, gf_string2percent);
 DEFINE_INIT_OPT(double, percent_or_size, pc_or_size);
@@ -1271,7 +1271,7 @@ DEFINE_RECONF_OPT(uint64_t, uint64, gf_string2uint64);
 DEFINE_RECONF_OPT(int64_t, int64, gf_string2int64);
 DEFINE_RECONF_OPT(uint32_t, uint32, gf_string2uint32);
 DEFINE_RECONF_OPT(int32_t, int32, gf_string2int32);
-DEFINE_RECONF_OPT(size_t, size, gf_string2bytesize_size);
+DEFINE_RECONF_OPT(uint64_t, size, gf_string2bytesize_uint64);
 DEFINE_RECONF_OPT(uint64_t, size_uint64, gf_string2bytesize_uint64);
 DEFINE_RECONF_OPT(double, percent, gf_string2percent);
 DEFINE_RECONF_OPT(double, percent_or_size, pc_or_size);

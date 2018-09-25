@@ -75,7 +75,7 @@ int32_t ec_parse_options(xlator_t * this)
     ec->stripe_size = ec->fragment_size * ec->fragments;
 
     gf_msg_debug ("ec", 0, "Initialized with: nodes=%u, fragments=%u, "
-                               "stripe_size=%u, node_mask=%lX",
+                               "stripe_size=%u, node_mask=%" PRIxFAST32,
            ec->nodes, ec->fragments, ec->stripe_size, ec->node_mask);
 
     error = 0;

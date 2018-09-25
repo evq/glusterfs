@@ -1070,7 +1070,7 @@ afr_sh_fav_by_majority (xlator_t *this, struct afr_reply *replies,
         for (i = 0; i < priv->child_count; i++) {
                 if (replies[i].valid == 1) {
                         gf_msg_debug (this->name, 0, "Child:%s "
-                                "mtime_sec = %ld, size = %lu for gfid %s",
+                                "mtime_sec = %" PRId64 ", size = %" PRIu64 " for gfid %s",
                                 priv->children[i]->name,
                                 replies[i].poststat.ia_mtime,
                                 replies[i].poststat.ia_size,
@@ -1111,7 +1111,7 @@ afr_sh_fav_by_mtime (xlator_t *this, struct afr_reply *replies, inode_t *inode)
         for (i = 0; i < priv->child_count; i++) {
                 if (replies[i].valid == 1) {
                         gf_msg_debug (this->name, 0, "Child:%s "
-                                "mtime = %ld, mtime_nsec = %d for gfid %s",
+                                "mtime = %" PRId64 ", mtime_nsec = %d for gfid %s",
                                 priv->children[i]->name,
                                 replies[i].poststat.ia_mtime,
                                 replies[i].poststat.ia_mtime_nsec,
@@ -1151,7 +1151,7 @@ afr_sh_fav_by_ctime (xlator_t *this, struct afr_reply *replies, inode_t *inode)
         for (i = 0; i < priv->child_count; i++) {
                 if (replies[i].valid == 1) {
                         gf_msg_debug (this->name, 0, "Child:%s "
-                                "ctime = %ld, ctime_nsec = %d for gfid %s",
+                                "ctime = %" PRId64 ", ctime_nsec = %d for gfid %s",
                                 priv->children[i]->name,
                                 replies[i].poststat.ia_ctime,
                                 replies[i].poststat.ia_ctime_nsec,
@@ -1190,7 +1190,7 @@ afr_sh_fav_by_size (xlator_t *this, struct afr_reply *replies, inode_t *inode)
         for (i = 0; i < priv->child_count; i++) {
                 if (replies[i].valid == 1) {
                         gf_msg_debug (this->name, 0, "Child:%s "
-                                "file size = %lu for gfid %s",
+                                "file size = %" PRIu64 " for gfid %s",
                                 priv->children[i]->name,
                                 replies[i].poststat.ia_size,
                                 uuid_utoa (inode->gfid));
@@ -1289,7 +1289,7 @@ afr_mark_split_brain_source_sinks_by_policy (call_frame_t *frame,
                 gf_msg (this->name, GF_LOG_WARNING, 0,
                         AFR_MSG_SBRAIN_FAV_CHILD_POLICY, "Source %s "
                         "selected as authentic to resolve conflicting "
-                         "data in file (gfid:%s) by %s (%lu bytes @ %s mtime, "
+                         "data in file (gfid:%s) by %s (%" PRIu64 " bytes @ %s mtime, "
                          "%s ctime).",
                          priv->children[fav_child]->name,
                          uuid_utoa (inode->gfid),

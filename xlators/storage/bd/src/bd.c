@@ -1023,7 +1023,7 @@ bd_setx_stat_cbk (call_frame_t *frame, void *cookie, xlator_t *this,
         if (!s_size)
                 size = bd_get_default_extent (priv);
         else
-                gf_string2bytesize (s_size, &size);
+                gf_string2bytesize_uint64 (s_size, &size);
 
         gf_asprintf (&bd, "%s:%ld", type, size);
         BD_VALIDATE_MEM_ALLOC (bd, op_errno, out);
@@ -1142,7 +1142,7 @@ bd_offload_getx_cbk (call_frame_t *frame, void *cookie, xlator_t *this,
         /* For clone size is taken from source LV */
         if (!local->size) {
                 p++;
-                gf_string2bytesize (p, &local->size);
+                gf_string2bytesize_uint64 (p, &local->size);
         }
         gf_asprintf (&bd, "%s:%ld", type, local->size);
         local->bdatt->type = gf_strdup (type);
@@ -1306,7 +1306,7 @@ bd_offload (call_frame_t *frame, xlator_t *this, loc_t *loc,
         gfid = strtok_r (param, ":", &p);
         size = strtok_r (NULL, ":", &p);
         if (size)
-                gf_string2bytesize (size, &local->size);
+                gf_string2bytesize_uint64 (size, &local->size);
         else if (offload != BD_OF_CLONE)
                 local->size = bd_get_default_extent (this->private);
 

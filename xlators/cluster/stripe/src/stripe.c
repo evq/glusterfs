@@ -2186,7 +2186,7 @@ stripe_create_cbk (call_frame_t *frame, void *cookie, xlator_t *this,
 				             priv->xl_array,
 					     local->fctx->stripe_count);
 			inode_ctx_put(local->inode, this,
-					(uint64_t) local->fctx);
+					(uint64_t)(uintptr_t) local->fctx);
                 }
 
                 /* Create itself has failed.. so return

@@ -257,7 +257,7 @@ static inline int
 br_stub_set_inode_ctx (xlator_t *this,
                        inode_t *inode, br_stub_inode_ctx_t *ctx)
 {
-        uint64_t ctx_addr = (uint64_t) ctx;
+        uint64_t ctx_addr = (uint64_t)(uintptr_t) ctx;
         return inode_ctx_set (inode, this, &ctx_addr);
 }
 

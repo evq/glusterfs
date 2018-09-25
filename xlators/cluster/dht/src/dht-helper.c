@@ -36,7 +36,7 @@ dht_fd_ctx_destroy (xlator_t *this, fd_t *fd)
                 goto out;
         }
 
-        fd_ctx = (dht_fd_ctx_t *)value;
+        fd_ctx = (dht_fd_ctx_t *)(uintptr_t)value;
         if (fd_ctx) {
                 GF_REF_PUT (fd_ctx);
         }
@@ -61,10 +61,10 @@ __dht_fd_ctx_set (xlator_t *this, fd_t *fd, xlator_t *dst)
                 goto out;
         }
 
-        fd_ctx->opened_on_dst = (uint64_t) dst;
+        fd_ctx->opened_on_dst = (uint64_t)(uintptr_t) dst;
         GF_REF_INIT (fd_ctx, dht_free_fd_ctx);
 
-        value = (uint64_t) fd_ctx;
+        value = (uint64_t)(uintptr_t) fd_ctx;
 
         ret = __fd_ctx_set (fd, this, value);
         if (ret < 0) {
@@ -94,8 +94,8 @@ dht_fd_ctx_set (xlator_t *this, fd_t *fd, xlator_t *dst)
                 ret = __fd_ctx_get (fd, this, &value);
                 if (ret && value) {
 
-                        fd_ctx = (dht_fd_ctx_t *) value;
-                        if (fd_ctx->opened_on_dst == (uint64_t) dst)  {
+                        fd_ctx = (dht_fd_ctx_t *)(uintptr_t) value;
+                        if (fd_ctx->opened_on_dst == (uint64_t)(uintptr_t) dst)  {
                                 /* This could happen due to racing
                                  * check_progress tasks*/
                                 goto unlock;
@@ -106,7 +106,7 @@ dht_fd_ctx_set (xlator_t *this, fd_t *fd, xlator_t *dst)
                                         "Different dst found in the fd ctx");
 
                                 /* Overwrite and hope for the best*/
-                                fd_ctx->opened_on_dst = (uint64_t)dst;
+                                fd_ctx->opened_on_dst = (uint64_t)(uintptr_t)dst;
                                 goto unlock;
                         }
 
@@ -140,7 +140,7 @@ dht_fd_ctx_get (xlator_t *this, fd_t *fd)
                         goto out;
                 }
 
-                fd_ctx = (dht_fd_ctx_t *)tmp_val;
+                fd_ctx = (dht_fd_ctx_t *)(uintptr_t)tmp_val;
                 GF_REF_GET (fd_ctx);
         }
         UNLOCK (&fd->lock);
@@ -158,7 +158,7 @@ dht_fd_open_on_dst (xlator_t *this, fd_t *fd, xlator_t *dst)
         fd_ctx = dht_fd_ctx_get (this, fd);
 
         if (fd_ctx) {
-                if (fd_ctx->opened_on_dst == (uint64_t) dst) {
+                if (fd_ctx->opened_on_dst == (uint64_t)(uintptr_t) dst) {
                         opened = _gf_true;
                 }
                 GF_REF_PUT (fd_ctx);
@@ -195,7 +195,7 @@ dht_inode_ctx_set_mig_info (xlator_t *this, inode_t *inode,
         miginfo->dst_subvol = dst_subvol;
         GF_REF_INIT (miginfo, dht_free_mig_info);
 
-        value = (uint64_t) miginfo;
+        value = (uint64_t)(uintptr_t) miginfo;
 
         ret = inode_ctx_set1 (inode, this, &value);
         if (ret < 0) {
@@ -223,7 +223,7 @@ dht_inode_ctx_get_mig_info (xlator_t *this, inode_t *inode,
                         goto out;
                 }
 
-                miginfo = (dht_migrate_info_t *)tmp_miginfo;
+                miginfo = (dht_migrate_info_t *)(uintptr_t)tmp_miginfo;
                 GF_REF_GET (miginfo);
         }
         UNLOCK (&inode->lock);
@@ -1362,7 +1362,7 @@ dht_migration_complete_check_task (void *data)
                                 tmp_loc.path ? tmp_loc.path :
                                 uuid_utoa (tmp_loc.gfid));
 
-                        miginfo = (void *)tmp_miginfo;
+                        miginfo = (void *)(uintptr_t)tmp_miginfo;
                         GF_REF_PUT (miginfo);
                 }
                 ret = 1;
@@ -1426,7 +1426,7 @@ dht_migration_complete_check_task (void *data)
            done on all the fd of inode */
         ret = inode_ctx_reset1 (inode, this, &tmp_miginfo);
         if (tmp_miginfo) {
-                miginfo = (void *)tmp_miginfo;
+                miginfo = (void *)(uintptr_t)tmp_miginfo;
                 GF_REF_PUT (miginfo);
                 goto out;
         }
@@ -1636,7 +1636,7 @@ dht_rebalance_inprogress_task (void *data)
                                 "%s: Found miginfo in the inode ctx",
                                 tmp_loc.path ? tmp_loc.path :
                                 uuid_utoa (tmp_loc.gfid));
-                        miginfo = (void *)tmp_miginfo;
+                        miginfo = (void *)(uintptr_t)tmp_miginfo;
                         GF_REF_PUT (miginfo);
                 }
                 ret = 1;
@@ -1899,7 +1899,7 @@ dht_inode_ctx_get (inode_t *inode, xlator_t *this, dht_inode_ctx_t **ctx)
                 return ret;
 
         if (ctx)
-                *ctx = (dht_inode_ctx_t *) ctx_int;
+                *ctx = (dht_inode_ctx_t *)(uintptr_t) ctx_int;
 out:
         return ret;
 }
@@ -2134,7 +2134,7 @@ __dht_lock_subvol_set (inode_t *inode, xlator_t *this,
                 return -1;
         }
 
-        ctx = (dht_inode_ctx_t *) value;
+        ctx = (dht_inode_ctx_t *)(uintptr_t) value;
         ctx->lock_subvol = lock_subvol;
 out:
         return ret;
@@ -2189,7 +2189,7 @@ dht_get_lock_subvolume (xlator_t *this, struct gf_flock *lock,
         LOCK (&inode->lock);
                 ret = __inode_ctx_get0 (inode, this, &value);
                 if (!ret && value) {
-                        ctx = (dht_inode_ctx_t *) value;
+                        ctx = (dht_inode_ctx_t *)(uintptr_t) value;
                         subvol = ctx->lock_subvol;
                 }
                 if (!subvol && lock->l_type != F_UNLCK && cached_subvol) {

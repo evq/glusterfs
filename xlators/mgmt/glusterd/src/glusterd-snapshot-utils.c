@@ -1561,6 +1561,7 @@ glusterd_import_friend_snap (dict_t *peer_data, int32_t snap_count,
         int32_t              volcount         = -1;
         int32_t              i                = -1;
         xlator_t            *this             = NULL;
+        int64_t time_stamp;
 
         this = THIS;
         GF_ASSERT (this);
@@ -1596,7 +1597,7 @@ glusterd_import_friend_snap (dict_t *peer_data, int32_t snap_count,
         ret = dict_get_str (peer_data, buf, &snap->description);
 
         snprintf (buf, sizeof(buf), "%s.time_stamp", prefix);
-        ret = dict_get_int64 (peer_data, buf, &snap->time_stamp);
+        ret = dict_get_int64 (peer_data, buf, &time_stamp);
         if (ret) {
                 gf_msg (this->name, GF_LOG_ERROR, 0,
                         GD_MSG_DICT_GET_FAILED,
@@ -1604,6 +1605,7 @@ glusterd_import_friend_snap (dict_t *peer_data, int32_t snap_count,
                         peer_snap_name);
                 goto out;
         }
+        snap->time_stamp = (time_t)time_stamp;
 
         snprintf (buf, sizeof(buf), "%s.snap_restored", prefix);
         ret = dict_get_int8 (peer_data, buf, (int8_t *) &snap->snap_restored);

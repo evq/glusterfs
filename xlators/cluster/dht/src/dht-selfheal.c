@@ -2085,7 +2085,7 @@ dht_selfheal_layout_new_directory (call_frame_t *frame, loc_t *loc,
                 /* We know total_size is not zero. */
                 chunk = ((double) 0xffffffff) / ((double) total_size);
                 gf_msg_debug (this->name, 0,
-                              "chunk size = 0xffffffff / %lu = %f",
+                              "chunk size = 0xffffffff / %" PRIu64 " = %f",
                               total_size, chunk);
         }
         else {

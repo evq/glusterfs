@@ -262,7 +262,7 @@ stripe_fill_pathinfo_xattr (xlator_t *this, stripe_local_t *local,
         }
 
         (void) snprintf (stripe_size_str, 20, "%"PRId64,
-                         (long long) (local->fctx) ? local->fctx->stripe_size : 0);
+                         local->fctx ? local->fctx->stripe_size : 0);
 
         /* extra bytes for decorations (brackets and <>'s) */
         padding = strlen (this->name) + strlen (STRIPE_PATHINFO_HEADER)

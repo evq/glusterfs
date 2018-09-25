@@ -36,7 +36,7 @@ bd_inode_ctx_get (inode_t *inode, xlator_t *this, bd_attr_t **ctx)
         if (ret)
                 return ret;
         if (ctx)
-                *ctx = (bd_attr_t *) ctx_int;
+                *ctx = (bd_attr_t *)(uintptr_t) ctx_int;
 out:
         return ret;
 }
@@ -316,7 +316,7 @@ bd_validate_bd_xattr (xlator_t *this, char *bd, char **type,
         if (bytes) {
                 *bytes = '\0';
                 bytes++;
-                gf_string2bytesize (bytes, &size);
+                gf_string2bytesize_uint64 (bytes, &size);
         }
 
         if (strcmp (bd, BD_LV) && strcmp (bd, BD_THIN)) {
